@@ -2,10 +2,13 @@ package com.algaworks.algafood.di.notificacao;
 
 import ch.qos.logback.core.net.server.Client;
 import com.algaworks.algafood.di.modelo.Cliente;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
-
+@Qualifier("E-mail")
+//@Primary usar esse bean como principal
 @Component
 public class NotificadorEmail implements Notificador{
 
