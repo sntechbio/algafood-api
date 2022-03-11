@@ -9,15 +9,27 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.List;
 
 
-@Component
+//@Component
 public class AtivacaoClienteService {
-
     @TipoDoNotificador(NivelUrgencia.URGENTE)
     @Autowired(required = false)
     private Notificador notificador;
+
+    // métodos de callback
+    //@PostConstruct
+    public void init() {
+        System.out.println("INIT " + notificador);
+    }
+
+    //@PreDestroy
+    public void destroy() {
+        System.out.println("DESTROY");
+    }
 
     public void ativar(Cliente cliente) {
         cliente.isAtivo();
