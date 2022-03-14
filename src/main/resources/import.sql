@@ -1,2 +1,5 @@
-insert into cozinha (nome) values ('Tailandesa')
-insert into cozinha (nome) values ('Inidiana')
+insert into cozinha (id, nome) values (1, 'Tailandesa')
+insert into cozinha (id, nome) values (2, 'Inidiana')
+insert into restaurante (nome, taxa_frete, cozinha_id) values ('Thai Gourmet', 10, 1)
+insert into restaurante (nome, taxa_frete, cozinha_id) value ('Thai Delivery', 9.50, 1)
+insert into restaurante (nome, taxa_frete, cozinha_id) value ('Tuk Tuk Comida Indiana', 15, 2)
