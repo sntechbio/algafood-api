@@ -47,7 +47,6 @@ public class CozinhaController {
         }
         //return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return ResponseEntity.notFound().build();
-
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,7 +64,6 @@ public class CozinhaController {
         }
         return ResponseEntity.notFound().build();
     }
-
     @DeleteMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
         try {
@@ -76,6 +74,5 @@ public class CozinhaController {
         } catch (EntidadeEmUsoException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-
     }
 }
