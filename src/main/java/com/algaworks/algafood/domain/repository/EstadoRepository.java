@@ -8,8 +8,8 @@ import java.util.List;
 public interface EstadoRepository {
 
     List<Estado> listar();
-    Restaurante buscar(Long id);
-    Restaurante salvar(Restaurante restaurante);
-    void remover(Restaurante restaurante);
+    Estado buscar(Long id);
+    Estado salvar(Estado estado);
+    void remover(Long id);
 
 }
