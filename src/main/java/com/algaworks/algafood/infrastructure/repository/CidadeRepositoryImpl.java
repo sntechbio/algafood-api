@@ -1,8 +1,8 @@
 package com.algaworks.algafood.infrastructure.repository;
 
-import com.algaworks.algafood.domain.model.Estado;
-import com.algaworks.algafood.domain.model.Restaurante;
-import com.algaworks.algafood.domain.repository.EstadoRepository;
+import com.algaworks.algafood.domain.model.Cidade;
+import com.algaworks.algafood.domain.repository.CidadeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,36 +12,35 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
-public class EstadoRepositoryImpl implements EstadoRepository {
+public class CidadeRepositoryImpl implements CidadeRepository {
 
     @PersistenceContext
     private EntityManager manager;
 
     @Override
-    public List<Estado> listar() {
-        return manager.createQuery("from Estado", Estado.class).getResultList();
+    public List<Cidade> listar() {
+        return manager.createQuery("from Cidade", Cidade.class).getResultList();
     }
 
     @Override
-    public Estado buscar(Long id) {
-        return manager.find(Estado.class, id);
+    public Cidade buscar(Long id) {
+        return manager.find(Cidade.class, id);
     }
 
     @Transactional
     @Override
-    public Estado salvar(Estado estado) {
-        return manager.merge(estado);
+    public Cidade salvar(Cidade cidade) {
+        return manager.merge(cidade);
     }
 
     @Transactional
     @Override
     public void remover(Long id) {
-        Estado estado = buscar(id);
+        Cidade cidade = buscar(id);
 
-        if (estado == null) {
+        if (cidade == null) {
             throw new EmptyResultDataAccessException(1);
         }
-
-        manager.remove(estado);
+        manager.remove(cidade);
     }
 }
