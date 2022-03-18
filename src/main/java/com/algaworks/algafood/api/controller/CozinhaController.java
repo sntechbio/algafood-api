@@ -53,6 +53,7 @@ public class CozinhaController {
     public Cozinha adicionar(@RequestBody Cozinha cozinha) {
         return cozinhaRepository.adicionar(cozinha);
     }
+
     @PutMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
         Cozinha cozinhaAtual = cozinhaRepository.porId(cozinhaId);
