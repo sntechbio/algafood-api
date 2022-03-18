@@ -7,4 +7,6 @@ insert into estado (id, nome) values (1, "Acre")
 insert into estado (id, nome) values (2, "Alagoas")
 insert into estado (id, nome) values (3, "São Paulo")
 insert into cidade (id, nome, estado_id) values (1, "São Paulo", 3)
+insert into cidade (id, nome, estado_id) values (2, "Piracicaba", 3)
+insert into cidade (id, nome, estado_id) values (3, "Ribeirão Preto", 3)
 
