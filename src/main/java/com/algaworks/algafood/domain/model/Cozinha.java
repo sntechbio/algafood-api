@@ -28,6 +28,9 @@ public class Cozinha {
     @Column(nullable = false)
     private String nome;
 
+    @Column(name = "observação")
+    private String descricao;
+
     // mapeamento das entidades relacionadas
     @JsonIgnore
     @OneToMany(mappedBy = "cozinha")
