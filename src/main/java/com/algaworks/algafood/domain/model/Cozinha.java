@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonRootName("cozinhas")
 @Data // com essa anotação vem tudo get set equals e hashcode toString
@@ -25,5 +27,13 @@ public class Cozinha {
     @JsonProperty(value = "nome")
     @Column(nullable = false)
     private String nome;
+
+    @Column(name = "observação")
+    private String descricao;
+
+    // mapeamento das entidades relacionadas
+    @JsonIgnore
+    @OneToMany(mappedBy = "cozinha")
+    private List<Restaurante> restaurantes = new ArrayList<>();
 
 }
