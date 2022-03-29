@@ -15,6 +15,7 @@
 	<description>API de delivery de comida</description>
 	<properties>
 		<java.version>11</java.version>
+		<flyway.version>7.15.0</flyway.version>
 	</properties>
 	<dependencies>
 
@@ -60,6 +61,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
 
 	</dependencies>
