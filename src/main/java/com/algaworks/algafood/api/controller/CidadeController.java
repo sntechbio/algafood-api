@@ -31,13 +31,8 @@ public class CidadeController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{cidadeId}")
-    public ResponseEntity<Cidade> buscar(@PathVariable Long cidadeId) {
-        Optional<Cidade> cidade = cidadeRepository.findById(cidadeId);
-
-        if (cidade.isPresent()) {
-            return ResponseEntity.ok(cidade.get());
-        }
-        return ResponseEntity.notFound().build();
+    public Cidade buscar(@PathVariable Long cidadeId) {
+        return cidadeRepository.findById(cidadeId).orElseThrow(() -> new EntidadeNaoEncontradaException("aaaa"));
     }
 
     @PostMapping
@@ -45,15 +40,6 @@ public class CidadeController {
     public Cidade adicionar(@RequestBody Cidade cidade) {
         return cidadeRepository.save(cidade);
     }
-//    @PostMapping
-//    public ResponseEntity<?> adicionar(@RequestBody Cidade cidade) {
-//        try {
-//            cidade = cadastroCidade.salvar(cidade);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
-//        } catch (EntidadeNaoEncontradaException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
 
     @PutMapping("/{cidadeId}")
     public ResponseEntity<Cidade> atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade) {
@@ -69,14 +55,8 @@ public class CidadeController {
     }
 
     @DeleteMapping("/{cidadeId}")
-    public ResponseEntity<?> remover(@PathVariable Long cidadeId) {
-        try {
-            cadastroCidade.excluir(cidadeId);
-            return ResponseEntity.noContent().build();
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long cidadeId) {
+        cadastroCidade.excluir(cidadeId);
     }
 }

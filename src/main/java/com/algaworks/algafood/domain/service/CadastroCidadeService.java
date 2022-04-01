@@ -28,7 +28,7 @@ public class CadastroCidadeService {
 
         if (!estado.isPresent()) {
             throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe cadastro de estado com código %d", estadoId)
+                    String.format("Não existe cadastro de estado com código id %d", estadoId)
             );
         }
         cidade.setEstado(estado.get());
@@ -40,7 +40,7 @@ public class CadastroCidadeService {
             cidadeRepository.deleteById(cidadeId);
         } catch (EmptyResultDataAccessException e) {
             throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe um cadastro de cidade com código %d", cidadeId)
+                    String.format("Não existe um cadastro de cidade com código id %d", cidadeId)
             );
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
