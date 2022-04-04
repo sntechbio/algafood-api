@@ -52,7 +52,6 @@ public class EstadoController {
 
         if (estadoAtual.isPresent()) {
             BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
-
             Estado estadoSalvo = cadastroEstado.salvar(estadoAtual.get());
             return ResponseEntity.ok(estadoSalvo);
         }
