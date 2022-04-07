@@ -6,7 +6,9 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,7 +61,6 @@ public class RestauranteController {
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
-
     }
 
     @PatchMapping("/{restauranteId}")
@@ -72,19 +73,26 @@ public class RestauranteController {
         }
 
         private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
-            System.out.println(restauranteOrigem);
+                Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
+                System.out.println(restauranteOrigem);
 
-            camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
-                Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
-                field.setAccessible(true);
+                camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
+                    Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+                    field.setAccessible(true);
 
-                Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
-                System.out.println(nomePropriedade + " = " + valorPropriedade);
-                ReflectionUtils.setField(field, restauranteDestino, valorPropriedade);
-            });
+                    Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
+                    System.out.println(nomePropriedade + " = " + valorPropriedade);
+                    ReflectionUtils.setField(field, restauranteDestino, valorPropriedade);
+                });
+            } catch (IllegalArgumentException e) {
+                Throwable rootCause = ExceptionUtils.getRootCause(e);
+            }
+
         }
 
     }
