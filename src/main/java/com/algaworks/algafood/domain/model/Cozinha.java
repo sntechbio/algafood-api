@@ -3,12 +3,15 @@ package com.algaworks.algafood.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class Cozinha {
     private Long id;
 
     //@JsonIgnore
-    @JsonProperty(value = "nome")
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 

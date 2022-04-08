@@ -8,12 +8,18 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.coyote.Response;
+import org.apache.tomcat.jni.Local;
 import org.hibernate.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -28,6 +34,12 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    public static final String MSG_ERRO_GENERICA_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. " +
+            "o problema persistir, entre em contato com o administrador do sistema";
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -71,12 +83,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
-    private String joinPath(List<JsonMappingException.Reference> references) {
-        return references.stream()
-                .map(JsonMappingException.Reference::getFieldName)
-                .collect(Collectors.joining("."));
-    }
-
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<?> tratarEntidadeNaoEncontradaException(
             EntidadeNaoEncontradaException ex, WebRequest request) {
@@ -86,17 +92,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
-
-//        Problem problem = Problem.builder()
-//                .status(status.value())
-//                .type("https://algafood.com.br/entidade-nao-encontrada")
-//                .title("Entidade não encontrada")
-//                .detail(ex.getMessage())
-//                .build();
-
-
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
@@ -108,7 +104,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-
     }
 
     @ExceptionHandler(NegocioException.class)
@@ -131,7 +126,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getRequestURL());
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
-
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
@@ -146,9 +140,35 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ex.printStackTrace();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
-
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ProblemType problemType = ProblemType.DADOS_INVALIDOS;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+        BindingResult bindingResult = ex.getBindingResult();
+
+        List<Problem.Field> problemFields = bindingResult.getFieldErrors().stream()
+                .map(fieldError -> {
+                    String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+
+                    return Problem.Field.builder()
+                            .name(fieldError.getField())
+                            .userMessage(message)
+                            .build();
+                }).collect(Collectors.toList());
+
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .fields(problemFields)
+                .userMessage(detail).build();
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
@@ -157,12 +177,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if (body == null) {
             body = Problem.builder()
                     .title(status.getReasonPhrase())
+                    .timestamp(LocalDateTime.now())
                     .status(status.value())
+                    .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
                     .build();
         } else if (body instanceof String) {
             body = Problem.builder()
                     .title((String) body)
+                    .timestamp(LocalDateTime.now())
                     .status(status.value())
+                    .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
                     .build();
         }
 
@@ -171,10 +195,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
         return Problem.builder()
+                .timestamp(LocalDateTime.now())
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail);
+    }
+
+    private String joinPath(List<JsonMappingException.Reference> references) {
+        return references.stream()
+                .map(JsonMappingException.Reference::getFieldName)
+                .collect(Collectors.joining("."));
     }
 
 }
