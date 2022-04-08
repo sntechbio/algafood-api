@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,12 +48,13 @@ public class CozinhaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cozinha adicionar(@RequestBody Cozinha cozinha) {
+    public Cozinha adicionar(@Valid @RequestBody Cozinha cozinha) {
         return cozinhaRepository.save(cozinha);
+
     }
 
     @PutMapping("/{cozinhaId}")
-    public Cozinha atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
+    public Cozinha atualizar(@Valid @PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
         Cozinha cozinhaAtual = cadastroCozinha.buscarOuFalhar(cozinhaId);
         BeanUtils.copyProperties(cozinha, cozinhaAtual);
         return cadastroCozinha.salvar(cozinhaAtual);

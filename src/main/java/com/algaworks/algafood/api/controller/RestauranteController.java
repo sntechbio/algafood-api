@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public Restaurante adicionar(@RequestBody Restaurante restaurante) {
+    public Restaurante adicionar(@Valid @RequestBody Restaurante restaurante) {
         try {
             return cadastroRestaurante.salvar(restaurante);
         } catch (CozinhaNaoEncontradoException e) {
