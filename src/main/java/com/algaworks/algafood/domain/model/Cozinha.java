@@ -32,7 +32,7 @@ public class Cozinha {
     private String nome;
 
     // mapeamento das entidades relacionadas
-    @JsonIgnore
+    //@JsonIgnore
     @OneToMany(mappedBy = "cozinha")
     private List<Restaurante> restaurantes = new ArrayList<>();
 

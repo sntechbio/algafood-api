@@ -3,6 +3,7 @@ package com.algaworks.algafood.domain.model;
 import com.algaworks.algafood.Groups;
 import com.algaworks.algafood.domain.service.CadastroCozinhaService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +37,7 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @NotNull
     @NotEmpty
     @NotBlank
@@ -47,10 +50,11 @@ public class Restaurante {
     private BigDecimal taxaFrete;
 
     // muitos para uma cozinha
+    @JsonIgnoreProperties(value = "nome", allowGetters = true)
     @Valid
     @ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
 
@@ -60,11 +64,11 @@ public class Restaurante {
 
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "datetime")
-    private LocalDateTime dataCadastro;
+    private OffsetDateTime dataCadastro;
 
     @UpdateTimestamp
     @Column(nullable = false, columnDefinition = "datetime")
-    private LocalDateTime dataAtualizacao;
+    private OffsetDateTime dataAtualizacao;
 
     @JsonIgnore
     @OneToMany(mappedBy = "restaurante")
