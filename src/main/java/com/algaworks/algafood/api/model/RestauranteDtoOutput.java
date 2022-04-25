@@ -20,7 +20,7 @@ public class RestauranteDtoOutput {
 
     @NotNull
     @PositiveOrZero
-    private BigDecimal taxaFrete;
+    private BigDecimal precoFrete;
     
     @Valid
     private CozinhaDtoOutput cozinha;

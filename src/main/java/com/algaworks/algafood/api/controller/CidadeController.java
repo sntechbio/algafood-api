@@ -1,30 +1,31 @@
 package com.algaworks.algafood.api.controller;
 
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
-import com.algaworks.algafood.api.exceptionhandler.Problem;
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.api.assembler.CidadeInputDissasembler;
+import com.algaworks.algafood.api.assembler.CidadeModelAssembler;
+import com.algaworks.algafood.api.model.CidadeModel;
+import com.algaworks.algafood.api.model.input.CidadeInput;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
-import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.service.CadastroCidadeService;
-import org.hibernate.cache.spi.access.EntityDataAccess;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
+
+    @Autowired
+    private CidadeModelAssembler cidadeModelAssembler;
+
+    @Autowired
+    private CidadeInputDissasembler cidadeInputDissasembler;
 
     @Autowired
     private CadastroCidadeService cadastroCidade;
@@ -32,33 +33,39 @@ public class CidadeController {
     private CidadeRepository cidadeRepository;
 
     @GetMapping
-    public List<Cidade> listar() {
-        return cidadeRepository.findAll();
+    public List<CidadeModel> listar() {
+        List<Cidade> todasCidades = cidadeRepository.findAll();
+        return cidadeModelAssembler.toCollectionModel(todasCidades);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{cidadeId}")
-    public Cidade buscar(@PathVariable Long cidadeId) {
-        return cadastroCidade.buscarOuFalhar(cidadeId);
+    public CidadeModel buscar(@PathVariable Long cidadeId) {
+        Cidade cidade = cadastroCidade.buscarOuFalhar(cidadeId);
+        return cidadeModelAssembler.toModel(cidade);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade adicionar(@Valid @RequestBody Cidade cidade) {
-        return cadastroCidade.salvar(cidade);
+    public CidadeModel adicionar(@Valid @RequestBody CidadeInput cidadeInput) {
+        try {
+            Cidade cidade = cidadeInputDissasembler.toDomainObject(cidadeInput);
+            cidade = cadastroCidade.salvar(cidade);
+            return cidadeModelAssembler.toModel(cidade);
+        } catch (EstadoNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
+        }
     }
 
     @PutMapping("/{cidadeId}")
-    public Cidade atualizar(@Valid @PathVariable Long cidadeId, @RequestBody Cidade cidade) {
-
+    public CidadeModel atualizar(@Valid @PathVariable Long cidadeId, @RequestBody @Valid CidadeInput cidadeInput) {
         try {
-
             Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
-            BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-
-            return cadastroCidade.salvar(cidadeAtual);
+            cidadeInputDissasembler.copyToDomainObject(cidadeInput, cidadeAtual);
+            cidadeAtual = cadastroCidade.salvar(cidadeAtual);
+            return cidadeModelAssembler.toModel(cidadeAtual);
         } catch (EstadoNaoEncontradoException e) {
-            throw new NegocioException(e.getMessage());
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 
