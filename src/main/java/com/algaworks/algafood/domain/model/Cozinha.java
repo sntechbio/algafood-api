@@ -27,12 +27,11 @@ public class Cozinha {
     private Long id;
 
     //@JsonIgnore
-    @NotBlank
     @Column(nullable = false)
     private String nome;
 
     // mapeamento das entidades relacionadas
-    @JsonIgnore
+    //@JsonIgnore
     @OneToMany(mappedBy = "cozinha")
     private List<Restaurante> restaurantes = new ArrayList<>();
 
