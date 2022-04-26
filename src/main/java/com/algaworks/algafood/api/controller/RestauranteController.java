@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
 import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaDtoOutput;
 import com.algaworks.algafood.api.model.RestauranteDtoOutput;
+import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.RestauranteDtoInput;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradoException;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -44,18 +46,18 @@ public class RestauranteController {
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
     @GetMapping
-    public List<RestauranteDtoOutput> listar() {
+    public List<RestauranteModel> listar() {
         return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
     }
 
     @GetMapping("/{restauranteId}")
-    public RestauranteDtoOutput buscar(@PathVariable Long restauranteId) {
+    public RestauranteModel buscar(@PathVariable Long restauranteId) {
         Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
         return restauranteModelAssembler.toModel(restaurante);
     }
 
     @PostMapping
-    public RestauranteDtoOutput adicionar(@Valid @RequestBody RestauranteDtoInput restauranteDtoInput) {
+    public RestauranteModel adicionar(@Valid @RequestBody RestauranteDtoInput restauranteDtoInput) {
         try {
             Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteDtoInput);
             return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restaurante));
@@ -65,7 +67,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{restauranteId}")
-    public RestauranteDtoOutput atualizar(@PathVariable Long restauranteId,
+    public RestauranteModel atualizar(@PathVariable Long restauranteId,
                                           @RequestBody @Valid RestauranteDtoInput restauranteDtoInput) {
         try {
             Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
@@ -75,5 +77,19 @@ public class RestauranteController {
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
+    }
+
+    // PUT em /restaurantes/{id}/ativo
+    // DELETE em /restaurantes/{id}/ativo
+    @PutMapping("/{restauranteId}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativar(@PathVariable Long restauranteId) {
+        cadastroRestaurante.ativar(restauranteId);
+    }
+
+    @DeleteMapping("/{restauranteId}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativar(@PathVariable Long restauranteId) {
+        cadastroRestaurante.inativar(restauranteId);
     }
 }

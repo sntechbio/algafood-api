@@ -33,5 +33,19 @@ public class CadastroRestauranteService {
         return restauranteRepository.findById(restauranteId)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(restauranteId));
     }
+
+    @Transactional
+    public void ativar(Long restauranteId) {
+        Restaurante restauranteAtual = buscarOuFalhar(restauranteId);
+        // NÃO PRECISA DO SAVE. QUANDO A GENTE BUSCA UM RESTAURANTE NO REPOSITOR ESSA INSTANCIA FICA NO ESTADO GERENCIADO PELO JPA (sINCRONIZADA COM O BANCO DE DADOS)
+        // O jpa JÁ ENETENDE que deve salvar
+        restauranteAtual.ativar();
+    }
+
+    @Transactional
+    public void inativar(Long restauranteId) {
+        Restaurante restauranteAtual = buscarOuFalhar(restauranteId);
+        restauranteAtual.inativar();
+    }
 }
 
