@@ -91,4 +91,8 @@ public class Restaurante {
         setAtivo(false);
     }
 
+    public boolean adicionarFormaPagamento(FormaPagamento formaPagamento) {
+        return getFormasPagamento().add(formaPagamento);
+    }
+
 }
