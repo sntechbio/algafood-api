@@ -11,8 +11,13 @@ import com.algaworks.algafood.domain.service.CadastroUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
+import org.w3c.dom.stylesheets.LinkStyle;
 
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -26,6 +31,12 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioInputDisassembler usuarioInputDisassembler;
+
+    @GetMapping
+    public List<UsuarioModel> listar() {
+        List<Usuario> todosUsuarios = usuarioRepository.findAll();
+        return usuarioModelAssembler.toCollectionModel(todosUsuarios);
+    }
 
     @GetMapping("/{usuarioId}")
     public UsuarioModel buscar(@PathVariable Long usuarioId) {
@@ -42,7 +53,17 @@ public class UsuarioController {
     }
 
     @PutMapping("/{usuarioId}")
-    public void atualizar(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senha) {
+    public UsuarioModel atualizar(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioInput usuarioInput) {
+        Usuario usuarioAtual = cadastroUsuarioService.buscarOuFalhar(usuarioId);
+        usuarioInputDisassembler.copyToDomainObject(usuarioInput, usuarioAtual);
+        usuarioAtual = cadastroUsuarioService.salvar(usuarioAtual);
+
+        return usuarioModelAssembler.toModel(usuarioAtual);
+    }
+
+
+    @PutMapping("/{usuarioId}/senha")
+    public void alterarSenha(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senha) {
         cadastroUsuarioService.alterarSenha(usuarioId, senha.getSenhaAtual(), senha.getNovaSenha());
     }
 }

@@ -81,6 +81,7 @@ public class RestauranteController {
 
     // PUT em /restaurantes/{id}/ativo
     // DELETE em /restaurantes/{id}/ativo
+
     @PutMapping("/{restauranteId}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativar(@PathVariable Long restauranteId) {
