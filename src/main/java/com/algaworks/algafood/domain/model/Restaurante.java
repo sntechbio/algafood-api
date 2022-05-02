@@ -23,9 +23,7 @@ import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -64,6 +62,8 @@ public class Restaurante {
     @Embedded
     private Endereco endereco;
 
+    private Boolean aberto = Boolean.FALSE;
+
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "datetime")
     private OffsetDateTime dataCadastro;
@@ -83,6 +83,11 @@ public class Restaurante {
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "restaurante_usuario_responsavel", joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+    private Set<Usuario> responsaveis = new HashSet<>();
+
     public void ativar() {
         setAtivo(true);
     }
@@ -95,4 +100,19 @@ public class Restaurante {
         return getFormasPagamento().add(formaPagamento);
     }
 
+    public void abrir() {
+        setAberto(true);
+    }
+
+    public void fechar() {
+        setAberto(false);
+    }
+
+    public boolean removerResponsavel(Usuario usuario) {
+        return getResponsaveis().remove(usuario);
+    }
+
+    public boolean adicionarResponsavel(Usuario usuario) {
+        return getResponsaveis().add(usuario);
+    }
 }
