@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.model.Cozinha;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.TransactionScoped;
+import java.util.List;
+
 @Service
 public class CadastroRestauranteService {
 
@@ -57,24 +60,31 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
+    public void ativar(List<Long> restaurantesIds) {
+        restaurantesIds.forEach(this::ativar);
+    }
+
+    @Transactional
+    public void inativar(List<Long> restauranteIds) {
+        restauranteIds.forEach(this::inativar);
+    }
+
+    @Transactional
     public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         FormaPagamento formaPagamento = cadastroFormaPagamento.buscarOuFalhar(formaPagamentoId);
-
         restaurante.adicionarFormaPagamento(formaPagamento);
     }
 
     @Transactional
     public void abrir(Long restauranteId) {
         Restaurante restauranteAtual = buscarOuFalhar(restauranteId);
-
         restauranteAtual.abrir();
     }
 
     @Transactional
     public void fechar(Long restauranteId) {
         Restaurante restauranteAtual = buscarOuFalhar(restauranteId);
-
         restauranteAtual.fechar();
     }
 
@@ -82,7 +92,6 @@ public class CadastroRestauranteService {
     public void desassociarResponsavel(Long restauranteId, Long usuarioId) {
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         Usuario usuario = cadastroUsuarioService.buscarOuFalhar(usuarioId);
-
         restaurante.removerResponsavel(usuario);
     }
 
