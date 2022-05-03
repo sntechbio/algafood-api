@@ -6,6 +6,7 @@ import com.algaworks.algafood.api.model.CozinhaDtoOutput;
 import com.algaworks.algafood.api.model.RestauranteDtoOutput;
 import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.RestauranteDtoInput;
+import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
@@ -79,6 +80,29 @@ public class RestauranteController {
         }
     }
 
+    // PUT /resturantes/ativacoes
+    // [1, 3, 4]
+
+    // DELETE /restaurantes/ativacoes
+    @PutMapping("/ativacoes")
+    public void ativarMultiplos(@RequestBody List<Long> restauranteIds) {
+        try {
+            cadastroRestaurante.ativar(restauranteIds);
+        } catch (RestauranteNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativarMultiplos(@RequestBody List<Long> restaurantesIds) {
+        try {
+            cadastroRestaurante.inativar(restaurantesIds);
+        } catch (RestauranteNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
+        }
+    }
+
     // PUT em /restaurantes/{id}/ativo
     // DELETE em /restaurantes/{id}/ativo
 
@@ -106,3 +130,4 @@ public class RestauranteController {
         cadastroRestaurante.fechar(restauranteId);
     }
 }
+
