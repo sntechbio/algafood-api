@@ -4,23 +4,20 @@ import com.algaworks.algafood.api.assembler.CozinhaModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.CozinhasXmlWrapper;
 import com.algaworks.algafood.api.model.input.CozinhaInput;
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
-import com.algaworks.algafood.domain.service.CadastroCidadeService;
 import com.algaworks.algafood.domain.service.CadastroCozinhaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 //@Controller
 //@ResponseBody
@@ -41,9 +38,16 @@ public class CozinhaController {
     CozinhaInputDisassembler cozinhaInputDisassembler;
 
     @GetMapping
-    public List<CozinhaModel> listar() {
-        List<Cozinha> todasCozinhas = cozinhaRepository.findAll();
-        return cozinhaModelAssembler.toCollectionModel(todasCozinhas);
+    public Page<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
+
+        List<CozinhaModel> cozinhasModel = cozinhaModelAssembler
+                .toCollectionModel(cozinhasPage.getContent());
+
+        Page<CozinhaModel> cozinhaModelPage = new PageImpl<>(cozinhasModel, pageable,
+                cozinhasPage.getTotalElements());
+
+        return cozinhaModelPage;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
