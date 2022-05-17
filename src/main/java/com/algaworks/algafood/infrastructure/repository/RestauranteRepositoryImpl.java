@@ -3,7 +3,7 @@ package com.algaworks.algafood.infrastructure.repository;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.exception.RestauranteRepositoryQueries;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
-import com.algaworks.algafood.infrastructure.repository.spec.RestauranteSpecs;
+import com.algaworks.algafood.infrastructure.spec.RestauranteSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -11,17 +11,13 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import static com.algaworks.algafood.infrastructure.repository.spec.RestauranteSpecs.comNomeSemelhante;
 
 @Repository
 public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
@@ -62,6 +58,6 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 
     @Override
     public List<Restaurante> findComFreteGratis(String nome) {
-        return restauranteRepository.findAll(RestauranteSpecs.comFreteGratis().and(comNomeSemelhante(nome)));
+        return restauranteRepository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
     }
 }
