@@ -1,12 +1,8 @@
 package com.algaworks.algafood.api.model;
 
-import com.algaworks.algafood.domain.model.Cidade;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Setter
 @Getter
@@ -14,7 +10,10 @@ public class EnderecoModel {
 
     private String cep;
     private String logradouro;
+
+    @ApiModelProperty(example = "\"1500\"")
     private String numero;
+
     private String complemento;
     private String bairro;
     private CidadeResumoModel cidade;

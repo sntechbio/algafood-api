@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.model.input;
 
 import com.algaworks.algafood.domain.model.Cidade;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class EnderecoInput {
     @NotBlank
     private String logradouro;
 
+    @ApiModelProperty(example = "\"1500\"", required = true)
     @NotBlank
     private String numero;
 

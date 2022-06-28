@@ -32,10 +32,10 @@ public class CozinhaController {
     private CadastroCozinhaService cadastroCozinha;
 
     @Autowired
-    CozinhaModelAssembler cozinhaModelAssembler;
+    private CozinhaModelAssembler cozinhaModelAssembler;
 
     @Autowired
-    CozinhaInputDisassembler cozinhaInputDisassembler;
+    private CozinhaInputDisassembler cozinhaInputDisassembler;
 
     @GetMapping
     public Page<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
@@ -44,8 +44,7 @@ public class CozinhaController {
         List<CozinhaModel> cozinhasModel = cozinhaModelAssembler
                 .toCollectionModel(cozinhasPage.getContent());
 
-        Page<CozinhaModel> cozinhaModelPage = new PageImpl<>(cozinhasModel, pageable,
-                cozinhasPage.getTotalElements());
+        Page<CozinhaModel> cozinhaModelPage = new PageImpl<>(cozinhasModel, pageable, cozinhasPage.getTotalElements());
 
         return cozinhaModelPage;
     }
