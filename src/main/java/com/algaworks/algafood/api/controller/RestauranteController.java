@@ -14,6 +14,7 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,7 +66,6 @@ public class RestauranteController {
 //
 //        return restaurantesWrapper;
 //    }
-
     @GetMapping
     public List<RestauranteModel> listar() {
         return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
@@ -105,7 +105,6 @@ public class RestauranteController {
         try {
             Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
             restauranteInputDisassembler.copyToDomainObject(restauranteDtoInput, restauranteAtual);
-
             return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restauranteAtual));
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());

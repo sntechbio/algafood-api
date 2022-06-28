@@ -2,6 +2,7 @@ package com.algaworks.algafood.domain.model;
 
 import com.algaworks.algafood.Groups;
 import com.algaworks.algafood.domain.service.CadastroCozinhaService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+@JsonFormat
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
