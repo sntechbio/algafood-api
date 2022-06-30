@@ -1,10 +1,19 @@
 package com.algaworks.algafood.core.swaggerConfig;
 
+import com.algaworks.algafood.api.controller.openapi.PedidoResumoModelOpenApi;
+import com.algaworks.algafood.api.controller.openapi.model.PageableModelOpenApi;
+import com.algaworks.algafood.api.exceptionhandler.Problem;
+import com.algaworks.algafood.api.model.PedidoResumoModel;
+import com.fasterxml.classmate.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.context.request.ServletWebRequest;
 import springfox.documentation.builders.*;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -19,6 +28,8 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
+        var typeResolve = new TypeResolver();
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.algaworks.algafood"))
@@ -29,6 +40,11 @@ public class SwaggerConfig {
                 .globalResponses(HttpMethod.POST, globalPostPutResponseMessages())
                 .globalResponses(HttpMethod.PUT, globalPostPutResponseMessages())
                 .globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
+                .additionalModels(typeResolve.resolve(Problem.class))
+                .ignoredParameterTypes(ServletWebRequest.class)
+                .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+                .alternateTypeRules(AlternateTypeRules.newRule(typeResolve.resolve(Page.class,
+                        PedidoResumoModel.class, PedidoResumoModelOpenApi.class)))
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos de usuários"),

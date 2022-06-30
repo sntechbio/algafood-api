@@ -29,7 +29,7 @@ public class EstadoController {
     private EstadoRepository estadoRepository;
 
     @Autowired
-    CadastroEstadoService cadastroEstado;
+    private CadastroEstadoService cadastroEstado;
 
     @GetMapping
     public List<EstadoModel> listar() {
