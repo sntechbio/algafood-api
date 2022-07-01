@@ -3,10 +3,12 @@ package com.algaworks.algafood.domain.service;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
+@Component
 public class FluxoPedidoService {
 
     @Autowired

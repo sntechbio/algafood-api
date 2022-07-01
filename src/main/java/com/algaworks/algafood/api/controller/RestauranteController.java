@@ -18,6 +18,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +80,18 @@ public class RestauranteController {
 //        return listar();
 //    }
 
+    @ApiOperation(value = "Lista restaurantes")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "Nome da projeção de pedidos", name = "projecao", paramType = "query",
+            type = "string", allowableValues = "apenas-nome")
+    })
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
     public List<RestauranteModel> listarApenasNomes() {
         return listar();
     }
 
+    @ApiOperation(value = "Lista restaurantes", hidden = true)
     @GetMapping("/{restauranteId}")
     public RestauranteModel buscar(@PathVariable Long restauranteId) {
         Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
