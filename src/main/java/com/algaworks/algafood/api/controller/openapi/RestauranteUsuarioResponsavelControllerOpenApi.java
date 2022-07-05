@@ -25,4 +25,17 @@ public interface RestauranteUsuarioResponsavelControllerOpenApi {
     void desassociar(
             @ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
             @ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
+
+    @ApiOperation("Associação de restaurante com usuário responsável")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Associação realizada com sucesso"),
+            @ApiResponse(code = 404, message = "Restaurante ou usuário não encontrado", response = Problem.class)
+    })
+    void associar(
+            @ApiParam(value = "ID do restaurante", example = "1", required = true)
+                    Long restauranteId,
+
+            @ApiParam(value = "ID do usuário", example = "1", required = true)
+                    Long usuarioId);
+
 }
