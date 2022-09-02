@@ -6,9 +6,6 @@ import com.algaworks.algafood.infrastructure.service.email.SmtpEnvioEmailService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-import static com.algaworks.algafood.core.email.EmailProperties.Implementacao.FAKE;
-import static com.algaworks.algafood.core.email.EmailProperties.Implementacao.SMTP;
-
 public class EmailConfig {
 
     @Autowired
