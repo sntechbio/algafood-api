@@ -22,5 +22,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     Page<Pedido> findAll(Specification<Pedido> usandoFiltro, Pageable pageable);
 
+    boolean isPedidoGerenciadoPor(String codigoPedido, Long usuarioId);
 
 }
